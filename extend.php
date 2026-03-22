@@ -1,7 +1,10 @@
 <?php
 
-use Flarum\Api\Serializer\BasicUserSerializer;
+use Flarum\Api\Context;
+use Flarum\Api\Resource;
+use Flarum\Api\Schema;
 use Flarum\Extend;
+use Flarum\User\User;
 use Ralkage\ProfileMessages\Api\Controller\CreateProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\DeleteProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\EditProfileMessageController;
@@ -9,7 +12,6 @@ use Ralkage\ProfileMessages\Api\Controller\ListProfileMessagesController;
 use Ralkage\ProfileMessages\Api\Controller\PreviewProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\ReportProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\ShowProfileMessageController;
-use Ralkage\ProfileMessages\Api\Serializer\ProfileMessageSerializer;
 use Ralkage\ProfileMessages\Notification\NewProfileMessageBlueprint;
 
 return [
@@ -38,15 +40,13 @@ return [
         ->registerPreference('blockProfileMessages', 'boolval', false)
         ->registerPreference('profileMessagesDefault', 'boolval', false),
 
-    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
-    (new Extend\ApiSerializer(BasicUserSerializer::class))
-        ->attribute('canPostProfileMessages', function ($serializer, $user) {
-            return $serializer->getActor()->can('profileMessage.post');
-        })
-        ->attribute('blockProfileMessages', function ($serializer, $user) {
-            return (bool) $user->getPreference('blockProfileMessages');
-        })
-        ->attribute('profileMessagesDefault', function ($serializer, $user) {
-            return (bool) $user->getPreference('profileMessagesDefault');
-        }),
+    (new Extend\ApiResource(Resource\UserResource::class))
+        ->fields(fn () => [
+            Schema\Boolean::make('canPostProfileMessages')
+                ->get(fn ($user, Context $context) => $context->getActor()->can('profileMessage.post')),
+            Schema\Boolean::make('blockProfileMessages')
+                ->get(fn ($user, Context $context) => (bool) $user->getPreference('blockProfileMessages')),
+            Schema\Boolean::make('profileMessagesDefault')
+                ->get(fn ($user, Context $context) => (bool) $user->getPreference('profileMessagesDefault')),
+        ]),
 ];
