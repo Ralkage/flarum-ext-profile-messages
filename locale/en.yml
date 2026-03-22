@@ -18,6 +18,7 @@ ralkage-profile-messages:
       edit_heading: "Edit Message"
       confirm_exit: "Your message has not been posted. Do you wish to discard it?"
       posted_message: "Your message has been posted."
+      preview_heading: "Preview"
       saved_message: "Your message has been updated."
       validation_empty: "Message cannot be empty."
       validation_too_long: "Message cannot exceed 2000 characters."

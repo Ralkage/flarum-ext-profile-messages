@@ -6,6 +6,7 @@ use Ralkage\ProfileMessages\Api\Controller\CreateProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\DeleteProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\EditProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\ListProfileMessagesController;
+use Ralkage\ProfileMessages\Api\Controller\PreviewProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\ReportProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\ShowProfileMessageController;
 use Ralkage\ProfileMessages\Api\Serializer\ProfileMessageSerializer;
@@ -27,6 +28,7 @@ return [
         ->post('/profile-messages', 'profile-messages.create', CreateProfileMessageController::class)
         ->patch('/profile-messages/{id}', 'profile-messages.update', EditProfileMessageController::class)
         ->delete('/profile-messages/{id}', 'profile-messages.delete', DeleteProfileMessageController::class)
+        ->post('/profile-messages/preview', 'profile-messages.preview', PreviewProfileMessageController::class)
         ->post('/profile-message-reports', 'profile-message-reports.create', ReportProfileMessageController::class),
 
     (new Extend\Notification())

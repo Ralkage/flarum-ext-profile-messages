@@ -4,6 +4,7 @@ import icon from 'flarum/common/helpers/icon';
 import username from 'flarum/common/helpers/username';
 import Link from 'flarum/common/components/Link';
 import extractText from 'flarum/common/utils/extractText';
+import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 
 export default class ProfileMessageComposer extends ComposerBody {
   static initAttrs(attrs) {
@@ -17,12 +18,17 @@ export default class ProfileMessageComposer extends ComposerBody {
     );
     attrs.confirmExit = attrs.confirmExit || extractText(app.translator.trans('ralkage-profile-messages.forum.composer.confirm_exit'));
 
-    // Pre-fill content when editing
     if (isEdit) {
-      // The stored content is XML from the formatter - we need the raw text
-      // Use unparse to get the original markdown/text back
       attrs.originalContent = attrs.editMessage.content();
     }
+  }
+
+  oninit(vnode) {
+    super.oninit(vnode);
+
+    this.previewHtml = '';
+    this.previewLoading = false;
+    this.showPreview = false;
   }
 
   headerItems() {
@@ -51,6 +57,72 @@ export default class ProfileMessageComposer extends ComposerBody {
     items.add('title', <h3>{icon(iconName)}{' '}{heading}</h3>);
 
     return items;
+  }
+
+  /**
+   * Enable the preview button in the composer toolbar.
+   */
+  jumpToPreview(e) {
+    if (e) e.preventDefault();
+
+    this.showPreview = !this.showPreview;
+
+    if (this.showPreview) {
+      this.loadPreview();
+    }
+
+    m.redraw();
+  }
+
+  loadPreview() {
+    const content = this.composer.fields.content();
+    if (!content || !content.trim()) {
+      this.previewHtml = '';
+      return;
+    }
+
+    this.previewLoading = true;
+
+    // Use the API to format the content server-side
+    app.request({
+      method: 'POST',
+      url: `${app.forum.attribute('apiUrl')}/profile-messages/preview`,
+      body: { content },
+    }).then((response) => {
+      this.previewHtml = response.contentHtml || '';
+      this.previewLoading = false;
+      m.redraw();
+    }).catch(() => {
+      // Fallback: show raw content
+      this.previewHtml = '<p>' + content.replace(/</g, '&lt;').replace(/>/g, '&gt;') + '</p>';
+      this.previewLoading = false;
+      m.redraw();
+    });
+  }
+
+  view() {
+    const view = super.view();
+
+    // Inject preview panel if active
+    if (this.showPreview) {
+      const previewPanel = (
+        <div className="ProfileMessageComposer-preview">
+          <div className="ProfileMessageComposer-previewHeader">
+            <strong>{app.translator.trans('ralkage-profile-messages.forum.composer.preview_heading')}</strong>
+          </div>
+          <div className="ProfileMessageComposer-previewContent">
+            {this.previewLoading ? <LoadingIndicator /> : m.trust(this.previewHtml)}
+          </div>
+        </div>
+      );
+
+      // Append preview after the composer body
+      if (view && view.children) {
+        view.children.push(previewPanel);
+      }
+    }
+
+    return view;
   }
 
   data() {

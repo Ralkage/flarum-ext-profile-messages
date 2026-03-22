@@ -4,11 +4,19 @@ namespace Ralkage\ProfileMessages\Api\Serializer;
 
 use Flarum\Api\Serializer\AbstractSerializer;
 use Flarum\Api\Serializer\BasicUserSerializer;
+use Flarum\Formatter\Formatter;
 use Ralkage\ProfileMessages\ProfileMessageReport;
 
 class ProfileMessageSerializer extends AbstractSerializer
 {
     protected $type = 'profile-messages';
+
+    protected $formatter;
+
+    public function __construct(Formatter $formatter)
+    {
+        $this->formatter = $formatter;
+    }
 
     protected function getDefaultAttributes($message)
     {
@@ -18,8 +26,14 @@ class ProfileMessageSerializer extends AbstractSerializer
         $isProfileOwner = $actor->id === $message->user_id;
         $isAdmin = $actor->isAdmin();
 
+        // Unparse XML back to original markdown/BBCode for editing
+        $contentPlain = $message->content;
+        if (! empty($contentPlain) && $contentPlain[0] === '<') {
+            $contentPlain = $this->formatter->unparse($contentPlain);
+        }
+
         return [
-            'content' => $message->content,
+            'content' => $contentPlain,
             'contentHtml' => $message->formatContent(),
             'parentId' => $message->parent_id,
             'replyCount' => $message->replies()->count(),

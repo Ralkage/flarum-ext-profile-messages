@@ -104,9 +104,16 @@
 
 .ProfileMessage-content {
   word-wrap: break-word;
+  overflow: hidden;
 
   p:last-child {
     margin-bottom: 0;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
   }
 }
 
@@ -168,6 +175,31 @@
 
   i {
     margin-right: 3px;
+  }
+}
+
+.ProfileMessageComposer-preview {
+  border-top: 1px solid var(--control-bg);
+  padding: 12px 15px;
+  background: var(--body-bg);
+}
+
+.ProfileMessageComposer-previewHeader {
+  margin-bottom: 8px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--muted-color);
+}
+
+.ProfileMessageComposer-previewContent {
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  p:last-child {
+    margin-bottom: 0;
   }
 }
 
