@@ -38,6 +38,7 @@ return [
         ->registerPreference('blockProfileMessages', 'boolval', false)
         ->registerPreference('profileMessagesDefault', 'boolval', false),
 
+    // @TODO: Replace with the new implementation https://docs.flarum.org/2.x/extend/api#extending-api-resources
     (new Extend\ApiSerializer(BasicUserSerializer::class))
         ->attribute('canPostProfileMessages', function ($serializer, $user) {
             return $serializer->getActor()->can('profileMessage.post');
