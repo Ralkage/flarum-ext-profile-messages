@@ -2,28 +2,25 @@
 
 namespace Ralkage\ProfileMessages\Api\Controller;
 
-use Flarum\Api\Controller\AbstractCreateController;
 use Flarum\Foundation\ValidationException;
 use Flarum\Http\RequestUtil;
 use Flarum\Locale\Translator;
 use Illuminate\Support\Arr;
+use Laminas\Diactoros\Response\JsonResponse;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Ralkage\ProfileMessages\ProfileMessage;
 use Ralkage\ProfileMessages\ProfileMessageReport;
-use Tobscure\JsonApi\Document;
 
-class ReportProfileMessageController extends AbstractCreateController
+class ReportProfileMessageController implements RequestHandlerInterface
 {
-    public $serializer = \Flarum\Api\Serializer\AbstractSerializer::class;
-
-    protected $translator;
-
-    public function __construct(Translator $translator)
-    {
-        $this->translator = $translator;
+    public function __construct(
+        protected Translator $translator,
+    ) {
     }
 
-    protected function data(ServerRequestInterface $request, Document $document)
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $actor = RequestUtil::getActor($request);
         $actor->assertRegistered();
@@ -35,14 +32,12 @@ class ReportProfileMessageController extends AbstractCreateController
 
         $message = ProfileMessage::findOrFail($messageId);
 
-        // Can't report your own messages
         if ($message->author_id === $actor->id) {
             throw new ValidationException([
                 'message' => $this->translator->trans('ralkage-profile-messages.forum.report.cannot_report_own'),
             ]);
         }
 
-        // Check for duplicate reports
         $existing = ProfileMessageReport::where('message_id', $messageId)
             ->where('user_id', $actor->id)
             ->first();
@@ -60,6 +55,6 @@ class ReportProfileMessageController extends AbstractCreateController
         $report->reason_detail = $reasonDetail ?: null;
         $report->save();
 
-        return $report;
+        return new JsonResponse(['success' => true], 201);
     }
 }

@@ -4,15 +4,15 @@ use Flarum\Api\Context;
 use Flarum\Api\Resource;
 use Flarum\Api\Schema;
 use Flarum\Extend;
-use Flarum\User\User;
-use Ralkage\ProfileMessages\Api\Controller\CreateProfileMessageController;
-use Ralkage\ProfileMessages\Api\Controller\DeleteProfileMessageController;
-use Ralkage\ProfileMessages\Api\Controller\EditProfileMessageController;
-use Ralkage\ProfileMessages\Api\Controller\ListProfileMessagesController;
+use Flarum\Search\Database\DatabaseSearchDriver;
 use Ralkage\ProfileMessages\Api\Controller\PreviewProfileMessageController;
 use Ralkage\ProfileMessages\Api\Controller\ReportProfileMessageController;
-use Ralkage\ProfileMessages\Api\Controller\ShowProfileMessageController;
+use Ralkage\ProfileMessages\Api\Resource\ProfileMessageResource;
 use Ralkage\ProfileMessages\Notification\NewProfileMessageBlueprint;
+use Ralkage\ProfileMessages\ProfileMessage;
+use Ralkage\ProfileMessages\Search\Filter\ParentFilter;
+use Ralkage\ProfileMessages\Search\Filter\UserFilter;
+use Ralkage\ProfileMessages\Search\ProfileMessageSearcher;
 
 return [
     (new Extend\Frontend('admin'))
@@ -24,12 +24,11 @@ return [
 
     new Extend\Locales(__DIR__.'/locale'),
 
+    // Register the ProfileMessage API resource (handles index, show, create, update, delete)
+    (new Extend\ApiResource(ProfileMessageResource::class)),
+
+    // These custom endpoints don't fit the resource CRUD pattern
     (new Extend\Routes('api'))
-        ->get('/profile-messages', 'profile-messages.index', ListProfileMessagesController::class)
-        ->get('/profile-messages/{id}', 'profile-messages.show', ShowProfileMessageController::class)
-        ->post('/profile-messages', 'profile-messages.create', CreateProfileMessageController::class)
-        ->patch('/profile-messages/{id}', 'profile-messages.update', EditProfileMessageController::class)
-        ->delete('/profile-messages/{id}', 'profile-messages.delete', DeleteProfileMessageController::class)
         ->post('/profile-messages/preview', 'profile-messages.preview', PreviewProfileMessageController::class)
         ->post('/profile-message-reports', 'profile-message-reports.create', ReportProfileMessageController::class),
 
@@ -39,6 +38,11 @@ return [
     (new Extend\User())
         ->registerPreference('blockProfileMessages', 'boolval', false)
         ->registerPreference('profileMessagesDefault', 'boolval', false),
+
+    (new Extend\SearchDriver(DatabaseSearchDriver::class))
+        ->addSearcher(ProfileMessage::class, ProfileMessageSearcher::class)
+        ->addFilter(ProfileMessageSearcher::class, UserFilter::class)
+        ->addFilter(ProfileMessageSearcher::class, ParentFilter::class),
 
     (new Extend\ApiResource(Resource\UserResource::class))
         ->fields(fn () => [

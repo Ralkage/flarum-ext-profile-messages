@@ -3,12 +3,12 @@ import UserPage from 'flarum/forum/components/UserPage';
 import LoadingIndicator from 'flarum/common/components/LoadingIndicator';
 import Button from 'flarum/common/components/Button';
 import Tooltip from 'flarum/common/components/Tooltip';
-import avatar from 'flarum/common/helpers/avatar';
+import Avatar from 'flarum/common/components/Avatar';
 import username from 'flarum/common/helpers/username';
 import humanTime from 'flarum/common/helpers/humanTime';
 import fullTime from 'flarum/common/helpers/fullTime';
 import Link from 'flarum/common/components/Link';
-import ProfileMessageComposer from './ProfileMessageComposer';
+import getProfileMessageComposer from './ProfileMessageComposer';
 import ReportMessageModal from './ReportMessageModal';
 
 export default class ProfileMessagesUserPage extends UserPage {
@@ -88,8 +88,8 @@ export default class ProfileMessagesUserPage extends UserPage {
     );
   }
 
-  openComposer(parentId) {
-    const component = ProfileMessageComposer;
+  async openComposer(parentId) {
+    const component = await getProfileMessageComposer();
     const user = this.user;
 
     app.composer.load(component, {
@@ -131,9 +131,9 @@ export default class ProfileMessagesUserPage extends UserPage {
         <div className="ProfileMessage-main">
           <div className="ProfileMessage-avatar">
             {author ? (
-              <Link href={app.route.user(author)}>{avatar(author)}</Link>
+              <Link href={app.route.user(author)}><Avatar user={author} /></Link>
             ) : (
-              avatar(null)
+              <Avatar user={null} />
             )}
           </div>
           <div className="ProfileMessage-body">
@@ -191,9 +191,9 @@ export default class ProfileMessagesUserPage extends UserPage {
       <div className="ProfileMessage ProfileMessage--reply" key={reply.id()}>
         <div className="ProfileMessage-avatar ProfileMessage-avatar--small">
           {author ? (
-            <Link href={app.route.user(author)}>{avatar(author)}</Link>
+            <Link href={app.route.user(author)}><Avatar user={author} /></Link>
           ) : (
-            avatar(null)
+            <Avatar user={null} />
           )}
         </div>
         <div className="ProfileMessage-body">
@@ -270,8 +270,8 @@ export default class ProfileMessagesUserPage extends UserPage {
     );
   }
 
-  editMessage(msg) {
-    app.composer.load(ProfileMessageComposer, {
+  async editMessage(msg) {
+    app.composer.load(await getProfileMessageComposer(), {
       user: this.user,
       editMessage: msg,
       onsubmit: (updated) => {
