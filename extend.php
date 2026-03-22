@@ -32,7 +32,7 @@ return [
         ->post('/profile-message-reports', 'profile-message-reports.create', ReportProfileMessageController::class),
 
     (new Extend\Notification())
-        ->type(NewProfileMessageBlueprint::class, ProfileMessageSerializer::class, ['alert']),
+        ->type(NewProfileMessageBlueprint::class, ['alert']),
 
     (new Extend\User())
         ->registerPreference('blockProfileMessages', 'boolval', false)
