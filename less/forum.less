@@ -1,0 +1,177 @@
+.ProfileMessagesUserPage {
+  max-width: 700px;
+}
+
+.ProfileMessages-compose {
+  margin-bottom: 20px;
+}
+
+.ProfileMessages-empty {
+  padding: 30px;
+  text-align: center;
+  color: var(--muted-color);
+
+  p {
+    margin: 0;
+  }
+}
+
+.ProfileMessages-list {
+  margin-top: 10px;
+}
+
+.ProfileMessage--toplevel {
+  padding: 15px 0;
+  border-bottom: 1px solid var(--control-bg);
+
+  &:last-child {
+    border-bottom: none;
+  }
+}
+
+.ProfileMessage-main {
+  display: flex;
+  gap: 12px;
+}
+
+.ProfileMessage--reply {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--control-bg);
+
+  &:first-child {
+    border-top: none;
+  }
+}
+
+.ProfileMessage-avatar {
+  flex-shrink: 0;
+
+  .Avatar {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.ProfileMessage-avatar--small {
+  .Avatar {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+.ProfileMessage-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ProfileMessage-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.ProfileMessage-author {
+  font-weight: bold;
+
+  a {
+    color: inherit;
+  }
+}
+
+.ProfileMessage-time {
+  color: var(--muted-color);
+  font-size: 12px;
+}
+
+.ProfileMessage-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 2px;
+}
+
+.ProfileMessage-action {
+  padding: 0 4px;
+  opacity: 0.4;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.ProfileMessage-content {
+  word-wrap: break-word;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.ProfileMessage-toggleReplies {
+  padding: 4px 0;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.ProfileMessage-replies {
+  margin-left: 52px;
+  margin-top: 8px;
+  padding-left: 12px;
+  border-left: 2px solid var(--control-bg);
+}
+
+.ProfileMessage-meta {
+  display: inline-block;
+
+  .ProfileMessage-time {
+    color: var(--muted-color);
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .Dropdown-menu {
+    padding: 8px 12px;
+    min-width: 280px;
+  }
+
+  .ProfileMessage-fullTime {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--muted-color);
+  }
+
+  .ProfileMessage-permalink {
+    font-size: 12px;
+    width: 100%;
+    padding: 4px 8px;
+  }
+}
+
+.ProfileMessage-action--danger:hover {
+  color: #e74c3c !important;
+}
+
+.ProfileMessage-reportBadge {
+  display: inline-block;
+  font-size: 11px;
+  color: #e74c3c;
+  margin-top: 4px;
+  opacity: 0.8;
+
+  i {
+    margin-right: 3px;
+  }
+}
+
+.ProfileMessages-loadMore {
+  text-align: center;
+  padding: 15px 0;
+}

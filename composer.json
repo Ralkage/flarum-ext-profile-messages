@@ -1,0 +1,42 @@
+{
+    "name": "ralkage/flarum-ext-profile-messages",
+    "description": "Allow users to post public messages on other users' profile pages",
+    "type": "flarum-extension",
+    "keywords": [
+        "profile",
+        "messages",
+        "wall",
+        "guestbook",
+        "visitor"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ralkage",
+            "email": "me@ralkage.com",
+            "homepage": "https://ralkage.com"
+        }
+    ],
+    "homepage": "https://ralkage.com",
+    "require": {
+        "flarum/core": "^1.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ralkage\\ProfileMessages\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "Profile Messages",
+            "category": "feature",
+            "icon": {
+                "name": "fas fa-comment-dots",
+                "backgroundColor": "#3498db",
+                "color": "#fff"
+            }
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
