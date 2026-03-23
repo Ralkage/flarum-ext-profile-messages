@@ -18,7 +18,10 @@ app.initializers.add('ralkage/profile-messages', () => {
     if (!user) return;
 
     const actor = app.session.user;
-    if (user.attribute('blockProfileMessages') && (!actor || actor.id() !== user.id())) return;
+    // Hide nav for others when blocked, but always show for the profile owner
+    if (user.attribute('blockProfileMessages') && actor && actor.id() !== user.id()) return;
+    // Also hide for guests when blocked
+    if (user.attribute('blockProfileMessages') && !actor) return;
 
     items.add(
       'profileMessages',
@@ -30,6 +33,18 @@ app.initializers.add('ralkage/profile-messages', () => {
       </LinkButton>,
       80
     );
+  });
+
+  // Redirect to profile messages if user has it set as default view
+  extend('flarum/forum/components/UserPage', 'show', function (returnValue, user) {
+    if (!user) return;
+
+    const currentPath = m.route.get();
+    const userPath = app.route('user', { username: user.slug() });
+
+    if (currentPath === userPath && user.attribute('profileMessagesDefault') && !user.attribute('blockProfileMessages')) {
+      m.route.set(app.route('user.profileMessages', { username: user.slug() }), { replace: true });
+    }
   });
 
   // Add privacy settings

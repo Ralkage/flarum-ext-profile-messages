@@ -43,14 +43,7 @@ class ProfileMessageResource extends AbstractDatabaseResource
 
     public function scope(Builder $query, OriginalContext $context): void
     {
-        // By default, only show top-level messages (no parent).
-        // The ParentFilter will override this when filtering by parent.
-        $queryParams = $context->request->getQueryParams();
-        $filterParent = $queryParams['filter']['parent'] ?? null;
-
-        if ($filterParent === null) {
-            $query->whereNull('parent_id');
-        }
+        // All profile messages are publicly readable
     }
 
     public function endpoints(): array

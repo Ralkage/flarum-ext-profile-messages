@@ -18,10 +18,18 @@ class ParentFilter implements FilterInterface
 
     public function filter(SearchState $state, string|array $value, bool $negate): void
     {
+        $query = $state->getQuery();
+
+        // Remove the default whereNull('parent_id') from the searcher
+        $query->getQuery()->wheres = array_values(array_filter(
+            $query->getQuery()->wheres,
+            fn ($where) => ($where['column'] ?? '') !== 'parent_id'
+        ));
+
         if ($value) {
-            $state->getQuery()->where('parent_id', $negate ? '!=' : '=', $value);
+            $query->where('parent_id', $negate ? '!=' : '=', $value);
         } else {
-            $state->getQuery()->whereNull('parent_id');
+            $query->whereNull('parent_id');
         }
     }
 }

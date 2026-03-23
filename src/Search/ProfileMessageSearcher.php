@@ -11,6 +11,8 @@ class ProfileMessageSearcher extends AbstractSearcher
 {
     public function getQuery(User $actor): Builder
     {
-        return ProfileMessage::query();
+        // Default to top-level messages only.
+        // ParentFilter will remove this constraint when filter[parent] is set.
+        return ProfileMessage::query()->whereNull('parent_id');
     }
 }
