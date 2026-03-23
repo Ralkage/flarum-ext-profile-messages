@@ -4,6 +4,8 @@
 
 Public profile wall messages for [Flarum](https://flarum.org), similar to XenForo's visitor messages. Users can post formatted messages on each other's profiles with threaded replies.
 
+<img width="1654" height="1043" alt="image" src="https://github.com/user-attachments/assets/c4d82f75-f7b6-4fbc-94d9-925c914da891" />
+
 ## Features
 
 ### Messaging
