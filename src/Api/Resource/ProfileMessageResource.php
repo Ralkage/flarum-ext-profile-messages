@@ -200,7 +200,7 @@ class ProfileMessageResource extends AbstractDatabaseResource
 
         $profileOwner = User::findOrFail($userId);
 
-        if ($profileOwner->getPreference('blockProfileMessages')) {
+        if ($profileOwner->getPreference('blockProfileMessages') && $actor->id !== $profileOwner->id) {
             throw new ValidationException([
                 'content' => $this->translator->trans('ralkage-profile-messages.forum.composer.validation_blocked'),
             ]);
