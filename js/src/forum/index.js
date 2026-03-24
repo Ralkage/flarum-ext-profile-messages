@@ -40,14 +40,20 @@ app.initializers.add('ralkage/profile-messages', () => {
   });
 
   // Redirect to profile messages if user has it set as default view
+  let lastUserPageRoute = null;
+
   extend(UserPage.prototype, 'show', function (returnValue, user) {
     if (!user) return;
 
-    // Only redirect on the main profile page (PostsUserPage), not when already on a sub-page
     const currentPath = m.route.get();
     const userPath = app.route('user', { username: user.slug() });
+    const prevPath = lastUserPageRoute;
+    lastUserPageRoute = currentPath;
 
-    if (currentPath === userPath && user.attribute('profileMessagesDefault') && !user.attribute('blockProfileMessages')) {
+    // Only redirect if on the exact user path, and not when switching tabs from a profile sub-page
+    const comingFromProfileSubPage = prevPath && prevPath.startsWith('/u/' + user.slug() + '/');
+
+    if (currentPath === userPath && !comingFromProfileSubPage && user.attribute('profileMessagesDefault') && !user.attribute('blockProfileMessages')) {
       m.route.set(app.route('user.profileMessages', { username: user.slug() }), { replace: true });
     }
   });
