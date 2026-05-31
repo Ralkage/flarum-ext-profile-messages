@@ -8,10 +8,16 @@ export default class NewProfileMessageNotification extends Notification {
 
   href() {
     const notification = this.attrs.notification;
-    const user = app.session.user;
+    const data = notification.content() || {};
+    const ownerSlug = data.profileOwnerUsername;
+    const fallbackUser = app.session.user;
 
-    if (user) {
-      return app.route('user.profileMessages', { username: user.slug() });
+    if (ownerSlug) {
+      return app.route('user.profileMessages', { username: ownerSlug });
+    }
+
+    if (fallbackUser) {
+      return app.route('user.profileMessages', { username: fallbackUser.slug() });
     }
 
     return '';
@@ -20,9 +26,21 @@ export default class NewProfileMessageNotification extends Notification {
   content() {
     const notification = this.attrs.notification;
     const fromUser = notification.fromUser();
+    const data = notification.content() || {};
+    const actor = app.session.user;
+    const recipientIsOwner = !data.profileOwnerId || (actor && String(actor.id()) === String(data.profileOwnerId));
+
+    const username = fromUser ? fromUser.displayName() : '[deleted]';
+
+    if (!recipientIsOwner) {
+      return app.translator.trans('ralkage-profile-messages.forum.notification.new_profile_message_reply_text', {
+        username,
+        profileOwner: data.profileOwnerDisplayName || data.profileOwnerUsername || '',
+      });
+    }
 
     return app.translator.trans('ralkage-profile-messages.forum.notification.new_profile_message_text', {
-      username: fromUser ? fromUser.displayName() : '[deleted]',
+      username,
     });
   }
 

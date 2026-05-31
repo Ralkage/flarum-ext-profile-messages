@@ -29,8 +29,14 @@ class NewProfileMessageBlueprint implements BlueprintInterface
 
     public function getData()
     {
+        $profileOwner = $this->message->user;
+
         return [
             'messageId' => $this->message->id,
+            'isReply' => ! empty($this->message->parent_id),
+            'profileOwnerId' => $profileOwner ? $profileOwner->id : null,
+            'profileOwnerUsername' => $profileOwner ? $profileOwner->username : null,
+            'profileOwnerDisplayName' => $profileOwner ? $profileOwner->display_name : null,
         ];
     }
 
