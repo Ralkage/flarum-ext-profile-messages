@@ -28,8 +28,14 @@ class NewProfileMessageBlueprint implements BlueprintInterface, AlertableInterfa
 
     public function getData(): mixed
     {
+        $profileOwner = $this->message->user;
+
         return [
             'messageId' => $this->message->id,
+            'isReply' => ! empty($this->message->parent_id),
+            'profileOwnerId' => $profileOwner?->id,
+            'profileOwnerUsername' => $profileOwner?->username,
+            'profileOwnerDisplayName' => $profileOwner?->display_name,
         ];
     }
 
